@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, String, FLOAT
+from sqlalchemy import create_engine, String, FLOAT, inspect
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 from typing import Optional
 from datetime import datetime
@@ -39,9 +39,16 @@ class Product(Base):
 Base.metadata.create_all(engine)
 print("\\nTables created successfully!")
 
+inspector = inspect(engine)
 
+print("Tables:", inspector.get_table_names())
+
+# Get column details for products
+for column in inspector.get_columns("products"):
+    print(f"  {column['name']}: {column['type']} (nullable={column['nullable']})")
+
+    
 # Create Sessions
-
 with Session(engine) as session:
     electronics = Category(name="Electronics", description="Electronic device")
     furniture = Category(name="Furniture", description="Home furniture")
